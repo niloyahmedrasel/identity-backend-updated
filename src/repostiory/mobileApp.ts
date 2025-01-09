@@ -1,9 +1,9 @@
 import { IMobileApp } from "../model/interface/mobileApp";
 import { MobileApp } from "../model/mobileApp";
-import { baseRepository } from "./baseRepostiory";
+import { baseRepository } from "./baseRepsoitory";
 
-export class MobileRepository extends baseRepository<IMobileApp>{
-    constructor(){
-        super(MobileApp);
-    }
+export class MobileRepository extends baseRepository<IMobileApp> {
+  constructor() {
+    super(MobileApp);
+  }
 }
