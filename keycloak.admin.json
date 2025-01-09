@@ -1,0 +1,13 @@
+{
+  "initOptions": {
+    "baseUrl": "https://accounts.dreamemirates.com",
+    "realmName": "master"
+  },
+  "loginDetails": {
+    "username": "admin",
+    "password": "admin@123",
+    "grantType": "password",
+    "clientId": "admin-cli"
+  },
+  "workingRealm": "dreamemirates"
+}

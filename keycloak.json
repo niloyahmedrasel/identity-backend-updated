@@ -1,0 +1,13 @@
+{
+  "realm": "dreamemirates",
+  "auth-server-url": "https://accounts.dreamemirates.com/",
+  "ssl-required": "external",
+  "resource": "one-chat",
+  "credentials": {
+    "secret": "YY2zTvZX0mEA6DTK8V5tppoHFs4DMMzw"
+  },
+  "confidential-port": 0,
+  "policy-enforcer": {
+    "credentials": {}
+  }
+}
