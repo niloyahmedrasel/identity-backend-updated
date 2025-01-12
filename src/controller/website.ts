@@ -1,22 +1,27 @@
 import { Request, Response } from "express";
 import { WebsiteService } from "../service/website";
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 const websiteService = new WebsiteService();
 
 export class WebsiteController {
-  async createWebsite(req: Request, res: Response) {
+  async createWebsite(req: Request, res: Response): Promise<any> {
     try {
+      const businessId =new mongoose.Types.ObjectId(req.body.businessId);
       const {
-        businessId,
         title,
-        logo,
         domain,
         templateId,
         pricePloicy,
         amount,
         primaryUrl,
       } = req.body;
+
+      const logo = req.file && req.file.originalname;
+
+      if (!logo) {
+          return res.status(400).json({ message: "Logo is required." });
+      }
 
       const response = await websiteService.createWebsite(
         businessId,

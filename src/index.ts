@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import path from "path";
 import { dbConnect } from "./config/db";
 import websiteRouter  from "./routes/website"
 import TemplateRouter  from "./routes/template"
@@ -11,7 +12,7 @@ import  KeyCloak  from "./middleware/keycloakAuth";
 const app = express();
 const port = 5000;
 
-
+app.use('/upload', express.static(path.join(__dirname, 'upload')));
 app.use(express.json());
 app.use(cors());
 dbConnect();
