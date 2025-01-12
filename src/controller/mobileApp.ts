@@ -45,6 +45,31 @@ export class MobileAppController {
     }
   }
 
+   async getById(req: Request, res: Response): Promise<any> {
+     const id = req.params.mobileAppId;
+ 
+     console.log(id);
+     try {
+       if (!id) {
+         return res.status(400).json({ message: "App ID is required" });
+       }
+ 
+       const response = await mobileAppService.getMobileAppById(id);
+ 
+       if (!response) {
+         return res.status(404).json({ message: "App not found" });
+       }
+ 
+       res
+         .status(200)
+         .json({ message: "App retrieved successfully", data: response });
+     } catch (error) {
+       const errorMessage =
+         error instanceof Error ? error.message : "An unexpected error occurred";
+       res.status(500).json({ message: errorMessage });
+     }
+   }
+
   async updateMobileApp(req: Request, res: Response) {
     try {
       const { mobileAppId } = req.params;

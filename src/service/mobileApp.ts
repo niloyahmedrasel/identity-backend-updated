@@ -48,6 +48,14 @@ export class MobileAppService {
     return mobileApps;
   }
 
+  async getMobileAppById(mobileAppId: string): Promise<IMobileApp | null> {
+    const mobileApp = await MobileApp.findOne({id:mobileAppId});
+    if (!mobileApp) {
+      throw new Error(`Mobile app with ID: ${mobileAppId} not found.`);
+    }
+    return mobileApp;
+  }
+
   async updateMobileApp(
     mobileAppId: Types.ObjectId,
     updateData: Partial<IMobileApp>

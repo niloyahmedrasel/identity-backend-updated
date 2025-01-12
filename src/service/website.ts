@@ -42,6 +42,14 @@ export class WebsiteService {
     return websites;
   }
 
+  async getWebsiteById(websiteId: string): Promise<IWebsite | null> {
+    const website = await websiteRepository.findOne({id:websiteId});
+    if (!website) {
+      throw new Error(`Website with ID: ${websiteId} not found.`);
+    }
+    return website;
+  }
+
   async updateWebsite(
     websiteId: Types.ObjectId,
     updateData: Partial<IWebsite>
