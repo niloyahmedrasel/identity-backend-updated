@@ -8,7 +8,7 @@ const websiteSchema = new mongoose.Schema<IWebsite>({
   logo: { type: String, required: true },
   domain: { type: String, required: true },
   templateId: { type: mongoose.Schema.Types.ObjectId, required: true },
-  pricePloicy: { type: String, required: true },
+  pricePloicy: { type: String,enum:["Premium","Discount"], required: true },
   amount: { type: Number, required: true },
   businessId: { type: mongoose.Schema.Types.ObjectId, required: true },
 });

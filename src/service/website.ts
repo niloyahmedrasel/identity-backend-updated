@@ -21,7 +21,7 @@ export class WebsiteService {
       throw new Error("Business website already exists. Cannot create a new website.");
     }
 
-    const id = Math.random().toString(36).substring(2, 8);
+    const id = Math.random().toString().substring(2, 8);
 
     return await websiteRepository.create({ id, businessId, title, logo, domain, templateId, pricePloicy, amount, primaryUrl });
   }

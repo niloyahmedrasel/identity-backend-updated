@@ -18,7 +18,7 @@ export class MobileAppService {
       throw new Error("Business already has a mobile app. Cannot create another one.");
     }
 
-    const id = Math.random().toString(36).substring(2, 8);
+    const id = Math.random().toString().substring(2, 8);
 
     return await MobileApp.create({
       id,
