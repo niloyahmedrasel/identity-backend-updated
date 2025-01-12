@@ -4,10 +4,11 @@ import { WebsiteController } from "../controller/website";
 const router = express.Router();
 
 
-router.get("/:websiteId", new WebsiteController().getById);
+
 router.post("/create", new WebsiteController().createWebsite);
 router.get("/all", new WebsiteController().getAllWebsites);
-router.get("/:businessId", new WebsiteController().getbyBusinessId);
+router.get("/businessId/:businessId", new WebsiteController().getbyBusinessId);
+router.get("/:websiteId", new WebsiteController().getById);
 router.put("/update/:websiteId", new WebsiteController().updateWebsite);
 router.delete("/delete/:websiteId", new WebsiteController().deleteWebsite);
 
