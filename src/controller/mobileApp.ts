@@ -26,9 +26,19 @@ export class MobileAppController {
   }
 
   async getAllMobileApps(req: Request, res: Response) {
+
+    const businessId = req.query.businessId;
     try {
-      const response = await mobileAppService.getAllMobileApps();
-      res.status(200).json({ message: "Mobile apps retrieved successfully", data: response });
+
+      if(businessId){
+        const response = await mobileAppService.getMobileAppsByBusinessId(new Types.ObjectId(businessId as string));
+        res.status(200).json({ message: "Mobile apps retrieved successfully", data: response });
+      }
+      else{
+        const response = await mobileAppService.getAllMobileApps();
+        res.status(200).json({ message: "Mobile apps retrieved successfully", data: response });
+      }
+      
     } catch (error) {
       res.status(404).json({ message: (error as Error).message });
     }

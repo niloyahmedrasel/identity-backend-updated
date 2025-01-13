@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { WebsiteService } from "../service/website";
 import mongoose, { Types } from "mongoose";
+import { WebsiteRepository } from "../repostiory/website";
 
 const websiteService = new WebsiteService();
-
+const websiteRepository = new WebsiteRepository();
 export class WebsiteController {
   async createWebsite(req: Request, res: Response): Promise<any> {
     try {
@@ -48,11 +49,17 @@ export class WebsiteController {
   }
 
   async getAllWebsites(req: Request, res: Response) {
+
+    const businessId = req.query.businessId;
     try {
-      const response = await websiteService.getAllWebsites();
-      res
-        .status(200)
-        .json({ message: "Websites retrieved successfully", data: response });
+      if(businessId){
+        const response = await websiteRepository.findOne({businessId: new Types.ObjectId(businessId as string)});
+        res.status(200).json({ message: "Websites retrieved successfully", data: response });
+      }
+      else{
+        const response = await websiteService.getAllWebsites();
+        res.status(200).json({ message: "Websites retrieved successfully", data: response });
+      }
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "An unexpected error occurred";
