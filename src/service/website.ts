@@ -57,7 +57,7 @@ export class WebsiteService {
     if (websites.length === 0) {
       throw new AppError(
         `No websites found for business ID: ${businessId}`,
-        404
+        200
       );
     }
     return websites;
