@@ -27,6 +27,8 @@ export class WebsiteService {
   }
 
   async getAllWebsites(): Promise<IWebsite[]> {
+
+    console.log("all website");
     const websites = await websiteRepository.find({});
     if (websites.length === 0) {
       throw new Error("No websites found.");
@@ -43,6 +45,8 @@ export class WebsiteService {
   }
 
   async getWebsiteById(websiteId: string): Promise<IWebsite | null> {
+
+    console.log("single website");
     const website = await websiteRepository.findOne({id:websiteId});
     if (!website) {
       throw new Error(`Website with ID: ${websiteId} not found.`);
