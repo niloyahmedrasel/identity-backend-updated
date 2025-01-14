@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import { MobileApp } from "../model/mobileApp";
 import { IMobileApp } from "../model/interface/mobileApp";
+import { AppError } from "../utils/appError";
 
 export class MobileAppService {
   async createMobileApp(
@@ -35,7 +36,7 @@ export class MobileAppService {
   async getAllMobileApps(): Promise<IMobileApp[]> {
     const mobileApps = await MobileApp.find({});
     if (mobileApps.length === 0) {
-      throw new Error("No mobile apps found.");
+      throw new AppError("No mobile apps found.",404);
     }
     return mobileApps;
   }
@@ -51,7 +52,7 @@ export class MobileAppService {
   async getMobileAppById(mobileAppId: string): Promise<IMobileApp | null> {
     const mobileApp = await MobileApp.findOne({id:mobileAppId});
     if (!mobileApp) {
-      throw new Error(`Mobile app with ID: ${mobileAppId} not found.`);
+      throw new AppError(`Mobile app with ID: ${mobileAppId} not found.`,404);
     }
     return mobileApp;
   }
@@ -62,7 +63,7 @@ export class MobileAppService {
   ): Promise<IMobileApp | null> {
     const updatedMobileApp = await MobileApp.findByIdAndUpdate(mobileAppId, updateData, { new: true });
     if (!updatedMobileApp) {
-      throw new Error(`Mobile app with ID: ${mobileAppId} not found.`);
+      throw new AppError(`Mobile app with ID: ${mobileAppId} not found.`,404);
     }
     return updatedMobileApp;
   }
@@ -70,7 +71,7 @@ export class MobileAppService {
   async deleteMobileApp(mobileAppId: Types.ObjectId): Promise<IMobileApp | null> {
     const deletedMobileApp = await MobileApp.findByIdAndDelete(mobileAppId);
     if (!deletedMobileApp) {
-      throw new Error(`Mobile app with ID: ${mobileAppId} not found.`);
+      throw new AppError(`Mobile app with ID: ${mobileAppId} not found.`,404);
     }
     return deletedMobileApp;
   }

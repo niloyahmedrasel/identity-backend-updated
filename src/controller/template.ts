@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { TemplateService } from "../service/template";
+import { AppError } from "../utils/appError";
 
 const templateService = new TemplateService();
 
@@ -12,7 +13,10 @@ export class TemplateController {
 
       res.status(201).json({ message: "Template created successfully", data: response });
     } catch (error) {
-      res.status(400).json({ message: (error as Error).message });
+      const statusCode = error instanceof AppError ? error.statusCode : 500;
+      const message =error instanceof AppError? error.message: "An unexpected error occurred";
+
+      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
     }
   }
 
@@ -21,7 +25,10 @@ export class TemplateController {
       const response = await templateService.getAllTemplates();
       res.status(200).json({ message: "Templates retrieved successfully", data: response });
     } catch (error) {
-      res.status(404).json({ message: (error as Error).message });
+      const statusCode = error instanceof AppError ? error.statusCode : 500;
+      const message =error instanceof AppError? error.message: "An unexpected error occurred";
+
+      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
     }
   }
 
@@ -32,7 +39,10 @@ export class TemplateController {
       const response = await templateService.getTemplateById(templateId);
       res.status(200).json({ message: "Template retrieved successfully", data: response });
     } catch (error) {
-      res.status(404).json({ message: (error as Error).message });
+      const statusCode = error instanceof AppError ? error.statusCode : 500;
+      const message =error instanceof AppError? error.message: "An unexpected error occurred";
+
+      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
     }
   }
 
@@ -45,7 +55,10 @@ export class TemplateController {
 
       res.status(200).json({ message: "Template updated successfully", data: response });
     } catch (error) {
-      res.status(404).json({ message: (error as Error).message });
+      const statusCode = error instanceof AppError ? error.statusCode : 500;
+      const message =error instanceof AppError? error.message: "An unexpected error occurred";
+
+      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
     }
   }
 
@@ -57,7 +70,10 @@ export class TemplateController {
 
       res.status(200).json({ message: "Template deleted successfully", data: response });
     } catch (error) {
-      res.status(404).json({ message: (error as Error).message });
+      const statusCode = error instanceof AppError ? error.statusCode : 500;
+      const message =error instanceof AppError? error.message: "An unexpected error occurred";
+
+      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
     }
   }
 }

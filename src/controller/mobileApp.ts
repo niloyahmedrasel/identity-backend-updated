@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { MobileAppService } from "../service/mobileApp";
 import { Types } from "mongoose";
+import { AppError } from "../utils/appError";
 
 const mobileAppService = new MobileAppService();
 
@@ -20,8 +21,11 @@ export class MobileAppController {
       );
 
       res.status(201).json({ message: "Mobile app created successfully", data: response });
-    } catch (error) {
-      res.status(400).json({ message: (error as Error).message });
+    }catch (error) {
+      const statusCode = error instanceof AppError ? error.statusCode : 500;
+      const message =error instanceof AppError? error.message: "An unexpected error occurred";
+
+      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
     }
   }
 
@@ -40,7 +44,10 @@ export class MobileAppController {
       }
       
     } catch (error) {
-      res.status(404).json({ message: (error as Error).message });
+      const statusCode = error instanceof AppError ? error.statusCode : 500;
+      const message =error instanceof AppError? error.message: "An unexpected error occurred";
+
+      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
     }
   }
 
@@ -51,7 +58,10 @@ export class MobileAppController {
       const response = await mobileAppService.getMobileAppsByBusinessId(new Types.ObjectId(businessId));
       res.status(200).json({ message: "Mobile apps retrieved successfully", data: response });
     } catch (error) {
-      res.status(404).json({ message: (error as Error).message });
+      const statusCode = error instanceof AppError ? error.statusCode : 500;
+      const message =error instanceof AppError? error.message: "An unexpected error occurred";
+
+      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
     }
   }
 
@@ -74,10 +84,11 @@ export class MobileAppController {
          .status(200)
          .json({ message: "App retrieved successfully", data: response });
      } catch (error) {
-       const errorMessage =
-         error instanceof Error ? error.message : "An unexpected error occurred";
-       res.status(500).json({ message: errorMessage });
-     }
+      const statusCode = error instanceof AppError ? error.statusCode : 500;
+      const message =error instanceof AppError? error.message: "An unexpected error occurred";
+
+      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
+    }
    }
 
   async updateMobileApp(req: Request, res: Response) {
@@ -89,7 +100,10 @@ export class MobileAppController {
 
       res.status(200).json({ message: "Mobile app updated successfully", data: response });
     } catch (error) {
-      res.status(404).json({ message: (error as Error).message });
+      const statusCode = error instanceof AppError ? error.statusCode : 500;
+      const message =error instanceof AppError? error.message: "An unexpected error occurred";
+
+      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
     }
   }
 
@@ -101,7 +115,10 @@ export class MobileAppController {
 
       res.status(200).json({ message: "Mobile app deleted successfully", data: response });
     } catch (error) {
-      res.status(404).json({ message: (error as Error).message });
+      const statusCode = error instanceof AppError ? error.statusCode : 500;
+      const message =error instanceof AppError? error.message: "An unexpected error occurred";
+
+      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
     }
   }
 }

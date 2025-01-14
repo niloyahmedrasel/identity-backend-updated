@@ -66,7 +66,7 @@ export class UserStore {
       this.index.uid.set(user.uid, user);
     });
 
-    logger.debug(`Loaded ${users.length} users from Keycloak`);
+   //logger.debug(`Loaded ${users.length} users from Keycloak`);
   }
 
   // Find users by criteria and return a sort function
@@ -479,7 +479,7 @@ export class UserStore {
     targetGroupName: string
   ): Promise<void> {
     try {
-      logger.info(`Adding user ${userId} to group ${targetGroupName}`);
+      //logger.info(`Adding user ${userId} to group ${targetGroupName}`);
       // Step 1: Retrieve all top-level groups
       const groups = await KeycloakAdminClient.client().groups.find();
       // Step 2: Recursively search for the target group in the hierarchy
@@ -530,9 +530,9 @@ export class UserStore {
 
       // Retrieve child groups and perform the recursive search
       const childGroups = await this.getChildGroups(group.id);
-      logger.info(
-        `Found ${childGroups.length} child groups for group ${group.name}`
-      );
+      // logger.info(
+      //   `Found ${childGroups.length} child groups for group ${group.name}`
+      // );
       const childGroup = await this.findGroupInHierarchy(
         childGroups,
         targetGroupName,

@@ -2,13 +2,14 @@ import { Request, Response } from "express";
 import { WebsiteService } from "../service/website";
 import mongoose, { Types } from "mongoose";
 import { WebsiteRepository } from "../repostiory/website";
+import { AppError } from "../utils/appError";
 
 const websiteService = new WebsiteService();
 const websiteRepository = new WebsiteRepository();
 export class WebsiteController {
   async createWebsite(req: Request, res: Response): Promise<any> {
     try {
-      const businessId =new mongoose.Types.ObjectId(req.body.businessId);
+      const businessId = new mongoose.Types.ObjectId(req.body.businessId);
       const {
         title,
         domain,
@@ -21,7 +22,7 @@ export class WebsiteController {
       const logo = req.file && req.file.originalname;
 
       if (!logo) {
-          return res.status(400).json({ message: "Logo is required." });
+        return res.status(400).json({ errorCode: 1001, message: "Logo is required." });
       }
 
       const response = await websiteService.createWebsite(
@@ -35,16 +36,21 @@ export class WebsiteController {
         primaryUrl
       );
 
-      if (!response) {
-        res.status(400).json({ message: "Failed to create website" });
-      }
-      res
-        .status(200)
-        .json({ message: "Website created successfully", data: response });
+      res.status(200).json({
+        message: "Website created successfully",
+        data: response,
+      });
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "An unexpected error occurred";
-      res.status(500).json({ message: errorMessage });
+      const statusCode = error instanceof AppError ? error.statusCode : 500;
+      const message =
+        error instanceof AppError
+          ? error.message
+          : "An unexpected error occurred";
+
+      res.status(statusCode).json({
+        errorCode: statusCode === 500 ? 1000 : statusCode, // Map statusCode to errorCode if needed
+        message,
+      });
     }
   }
 
@@ -61,9 +67,10 @@ export class WebsiteController {
         res.status(200).json({ message: "Websites retrieved successfully", data: response });
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "An unexpected error occurred";
-      res.status(500).json({ message: errorMessage });
+      const statusCode = error instanceof AppError ? error.statusCode : 500;
+      const message =error instanceof AppError? error.message: "An unexpected error occurred";
+
+      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
     }
   }
 
@@ -71,20 +78,16 @@ export class WebsiteController {
     try {
       const businessId = req.params.businessId;
 
-      if (!businessId) {
-        return res.status(400).json({ message: "Business ID is required" });
-      }
-
       const response = await websiteService.getWebsitesByBusinessId(
         new Types.ObjectId(businessId)
       );
-      res
-        .status(200)
-        .json({ message: "Websites retrieved successfully", data: response });
+
+      res.status(200).json({ message: "Websites retrieved successfully", data: response });
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "An unexpected error occurred";
-      res.status(500).json({ message: errorMessage });
+      const statusCode = error instanceof AppError ? error.statusCode : 500;
+      const message =error instanceof AppError? error.message: "An unexpected error occurred";
+
+      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
     }
   }
 
@@ -107,9 +110,10 @@ export class WebsiteController {
         .status(200)
         .json({ message: "Website retrieved successfully", data: response });
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "An unexpected error occurred";
-      res.status(500).json({ message: errorMessage });
+      const statusCode = error instanceof AppError ? error.statusCode : 500;
+      const message =error instanceof AppError? error.message: "An unexpected error occurred";
+
+      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
     }
   }
 
@@ -135,9 +139,10 @@ export class WebsiteController {
         .status(200)
         .json({ message: "Website updated successfully", data: response });
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "An unexpected error occurred";
-      res.status(500).json({ message: errorMessage });
+      const statusCode = error instanceof AppError ? error.statusCode : 500;
+      const message =error instanceof AppError? error.message: "An unexpected error occurred";
+
+      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
     }
   }
 
@@ -161,9 +166,10 @@ export class WebsiteController {
         .status(200)
         .json({ message: "Website deleted successfully", data: response });
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "An unexpected error occurred";
-      res.status(500).json({ message: errorMessage });
+      const statusCode = error instanceof AppError ? error.statusCode : 500;
+      const message =error instanceof AppError? error.message: "An unexpected error occurred";
+
+      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
     }
   }
 }

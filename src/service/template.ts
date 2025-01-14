@@ -1,6 +1,7 @@
 import { Template } from "../model/template";
 import { ITemplate } from "../model/interface/template";
 import { Types } from "mongoose";
+import { AppError } from "../utils/appError";
 
 export class TemplateService {
   async createTemplate(templateName: string, category: string): Promise<ITemplate> {
@@ -12,7 +13,7 @@ export class TemplateService {
   async getAllTemplates(): Promise<ITemplate[]> {
     const templates = await Template.find({});
     if (templates.length === 0) {
-      throw new Error("No templates found.");
+      throw new AppError("No templates found.", 404);
     }
     return templates;
   }
@@ -20,7 +21,7 @@ export class TemplateService {
   async getTemplateById(templateId: string): Promise<ITemplate | null> {
     const template = await Template.findOne({ _id: templateId });
     if (!template) {
-      throw new Error(`Template with ID: ${templateId} not found.`);
+      throw new AppError(`Template with ID: ${templateId} not found.`,404);
     }
     return template;
   }
@@ -28,7 +29,7 @@ export class TemplateService {
   async updateTemplate(templateId: string, updateData: Partial<ITemplate>): Promise<ITemplate | null> {
     const updatedTemplate = await Template.findOneAndUpdate({ _id: templateId }, updateData, { new: true });
     if (!updatedTemplate) {
-      throw new Error(`Template with ID: ${templateId} not found.`);
+      throw new AppError(`Template with ID: ${templateId} not found.`,404);
     }
     return updatedTemplate;
   }
@@ -36,7 +37,7 @@ export class TemplateService {
   async deleteTemplate(templateId: string): Promise<ITemplate | null> {
     const deletedTemplate = await Template.findOneAndDelete({ _id: templateId });
     if (!deletedTemplate) {
-      throw new Error(`Template with ID: ${templateId} not found.`);
+      throw new AppError(`Template with ID: ${templateId} not found.`,404);
     }
     return deletedTemplate;
   }

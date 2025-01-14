@@ -64,7 +64,7 @@ class KeyCloak {
     const PUBLIC_KEY_URL = `${KEYCLOAK_URL}/realms/${REALM_NAME}/protocol/openid-connect/certs`;
 
     const loadAndCachePublicKey = async () => {
-      logger.debug(`Loading Keycloak public key from: ${PUBLIC_KEY_URL}`);
+      // logger.debug(`Loading Keycloak public key from: ${PUBLIC_KEY_URL}`);
       const now = Date.now();
       try {
         const response = await axios.get(PUBLIC_KEY_URL);
@@ -73,9 +73,9 @@ class KeyCloak {
         // Cache the public key and timestamp
         KeyCloak.cachedPublicKey = publicKey;
         KeyCloak.publicKeyFetchTime = now;
-        logger.debug("Keycloak public key loaded and cached.");
+        // logger.debug("Keycloak public key loaded and cached.");
       } catch (error: any) {
-        logger.debug("Failed to load Keycloak public key:", error);
+        // logger.debug("Failed to load Keycloak public key:", error);
         throw new Error("Failed to get Keycloak public key: " + error.message);
       }
     };
@@ -105,9 +105,9 @@ class KeyCloak {
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
 
-      logger.debug(
-        "Failed to get Keycloak public key after multiple attempts."
-      );
+      // logger.debug(
+      //   "Failed to get Keycloak public key after multiple attempts."
+      // );
       throw new Error(
         "Failed to get Keycloak public key after multiple attempts."
       );

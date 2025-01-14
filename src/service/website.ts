@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import { WebsiteRepository } from "../repostiory/website";
 import { IWebsite } from "../model/interface/website";
+import { AppError } from "../utils/appError";
 
 const websiteRepository = new WebsiteRepository();
 
@@ -18,28 +19,42 @@ export class WebsiteService {
     const existBusiness = await websiteRepository.findOne({ businessId });
 
     if (existBusiness) {
-      throw new Error("Business website already exists. Cannot create a new website.");
+
+      throw new AppError( "Business website already exists. Cannot create a new website.",400);
     }
 
     const id = Math.random().toString().substring(2, 8);
 
-    return await websiteRepository.create({ id, businessId, title, logo, domain, templateId, pricePloicy, amount, primaryUrl });
+    return await websiteRepository.create({
+      id,
+      businessId,
+      title,
+      logo,
+      domain,
+      templateId,
+      pricePloicy,
+      amount,
+      primaryUrl,
+    });
   }
+
 
   async getAllWebsites(): Promise<IWebsite[]> {
 
     console.log("all website");
     const websites = await websiteRepository.find({});
     if (websites.length === 0) {
-      throw new Error("No websites found.");
+      throw new AppError("No websites found.", 404);
     }
     return websites;
   }
 
   async getWebsitesByBusinessId(businessId: Types.ObjectId): Promise<IWebsite[]> {
+
     const websites = await websiteRepository.find({ businessId });
     if (websites.length === 0) {
-      throw new Error(`No websites found for business ID: ${businessId}`);
+      throw new AppError(`No websites found for business ID: ${businessId}`,404);
+     
     }
     return websites;
   }
@@ -49,7 +64,7 @@ export class WebsiteService {
     console.log("single website");
     const website = await websiteRepository.findOne({id:websiteId});
     if (!website) {
-      throw new Error(`Website with ID: ${websiteId} not found.`);
+      throw new AppError(`Website with ID: ${websiteId} not found.`,404);
     }
     return website;
   }
@@ -60,7 +75,7 @@ export class WebsiteService {
   ): Promise<IWebsite | null> {
     const updatedWebsite = await websiteRepository.updateByID(websiteId.toString(), updateData);
     if (!updatedWebsite) {
-      throw new Error(`Website with ID: ${websiteId} not found.`);
+      throw new AppError(`Website with ID: ${websiteId} not found.`,404);
     }
     return updatedWebsite;
   }
@@ -68,7 +83,7 @@ export class WebsiteService {
   async deleteWebsite(websiteId: Types.ObjectId): Promise<IWebsite | null> {
     const deletedWebsite = await websiteRepository.deleteById(websiteId.toString());
     if (!deletedWebsite) {
-      throw new Error(`Website with ID: ${websiteId} not found.`);
+      throw new AppError(`Website with ID: ${websiteId} not found.`,404);
     }
     return deletedWebsite;
   }
