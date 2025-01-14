@@ -19,8 +19,10 @@ export class WebsiteService {
     const existBusiness = await websiteRepository.findOne({ businessId });
 
     if (existBusiness) {
-
-      throw new AppError( "Business website already exists. Cannot create a new website.",400);
+      throw new AppError(
+        "Business website already exists. Cannot create a new website.",
+        400
+      );
     }
 
     const id = Math.random().toString().substring(2, 8);
@@ -38,9 +40,7 @@ export class WebsiteService {
     });
   }
 
-
   async getAllWebsites(): Promise<IWebsite[]> {
-
     console.log("all website");
     const websites = await websiteRepository.find({});
     if (websites.length === 0) {
@@ -49,22 +49,25 @@ export class WebsiteService {
     return websites;
   }
 
-  async getWebsitesByBusinessId(businessId: Types.ObjectId): Promise<IWebsite[]> {
-
-    const websites = await websiteRepository.find({ businessId });
+  async getWebsitesByBusinessId(
+    businessId: Types.ObjectId
+  ): Promise<IWebsite[]> {
+    const websites = await websiteRepository.find({businessId: businessId });
+    console.log(websites);
     if (websites.length === 0) {
-      throw new AppError(`No websites found for business ID: ${businessId}`,404);
-     
+      throw new AppError(
+        `No websites found for business ID: ${businessId}`,
+        404
+      );
     }
     return websites;
   }
 
   async getWebsiteById(websiteId: string): Promise<IWebsite | null> {
-
     console.log("single website");
-    const website = await websiteRepository.findOne({id:websiteId});
+    const website = await websiteRepository.findOne({ id: websiteId });
     if (!website) {
-      throw new AppError(`Website with ID: ${websiteId} not found.`,404);
+      throw new AppError(`Website with ID: ${websiteId} not found.`, 404);
     }
     return website;
   }
@@ -73,17 +76,43 @@ export class WebsiteService {
     websiteId: Types.ObjectId,
     updateData: Partial<IWebsite>
   ): Promise<IWebsite | null> {
-    const updatedWebsite = await websiteRepository.updateByID(websiteId.toString(), updateData);
-    if (!updatedWebsite) {
-      throw new AppError(`Website with ID: ${websiteId} not found.`,404);
+    const allowedFields = [
+      "title",
+      "logo",
+      "domain",
+      "templateId",
+      "pricePloicy",
+      "amount",
+      "businessId",
+    ];
+  
+    const validUpdates = Object.keys(updateData).filter((key) =>
+      allowedFields.includes(key)
+    );
+  
+    if (validUpdates.length === 0) {
+      throw new AppError("No valid fields provided for update.", 400);
     }
+  
+    // Call the repository to perform the update
+    const updatedWebsite = await websiteRepository.updateByID(
+      websiteId.toString(),
+      updateData
+    );
+  
+    if (!updatedWebsite) {
+      throw new AppError(`Website with ID: ${websiteId} not found.`, 404);
+    }
+  
     return updatedWebsite;
   }
 
   async deleteWebsite(websiteId: Types.ObjectId): Promise<IWebsite | null> {
-    const deletedWebsite = await websiteRepository.deleteById(websiteId.toString());
+    const deletedWebsite = await websiteRepository.deleteById(
+      websiteId.toString()
+    );
     if (!deletedWebsite) {
-      throw new AppError(`Website with ID: ${websiteId} not found.`,404);
+      throw new AppError(`Website with ID: ${websiteId} not found.`, 404);
     }
     return deletedWebsite;
   }

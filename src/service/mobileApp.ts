@@ -16,7 +16,9 @@ export class MobileAppService {
     const existingMobileApp = await MobileApp.findOne({ businessId });
 
     if (existingMobileApp) {
-      throw new Error("Business already has a mobile app. Cannot create another one.");
+      throw new Error(
+        "Business already has a mobile app. Cannot create another one."
+      );
     }
 
     const id = Math.random().toString().substring(2, 8);
@@ -36,12 +38,14 @@ export class MobileAppService {
   async getAllMobileApps(): Promise<IMobileApp[]> {
     const mobileApps = await MobileApp.find({});
     if (mobileApps.length === 0) {
-      throw new AppError("No mobile apps found.",404);
+      throw new AppError("No mobile apps found.", 404);
     }
     return mobileApps;
   }
 
-  async getMobileAppsByBusinessId(businessId: Types.ObjectId): Promise<IMobileApp[]> {
+  async getMobileAppsByBusinessId(
+    businessId: Types.ObjectId
+  ): Promise<IMobileApp[]> {
     const mobileApps = await MobileApp.find({ businessId });
     if (mobileApps.length === 0) {
       throw new Error(`No mobile apps found for business ID: ${businessId}`);
@@ -50,9 +54,9 @@ export class MobileAppService {
   }
 
   async getMobileAppById(mobileAppId: string): Promise<IMobileApp | null> {
-    const mobileApp = await MobileApp.findOne({id:mobileAppId});
+    const mobileApp = await MobileApp.findOne({ id: mobileAppId });
     if (!mobileApp) {
-      throw new AppError(`Mobile app with ID: ${mobileAppId} not found.`,404);
+      throw new AppError(`Mobile app with ID: ${mobileAppId} not found.`, 404);
     }
     return mobileApp;
   }
@@ -61,17 +65,23 @@ export class MobileAppService {
     mobileAppId: Types.ObjectId,
     updateData: Partial<IMobileApp>
   ): Promise<IMobileApp | null> {
-    const updatedMobileApp = await MobileApp.findByIdAndUpdate(mobileAppId, updateData, { new: true });
+    const updatedMobileApp = await MobileApp.findByIdAndUpdate(
+      mobileAppId,
+      updateData,
+      { new: true }
+    );
     if (!updatedMobileApp) {
-      throw new AppError(`Mobile app with ID: ${mobileAppId} not found.`,404);
+      throw new AppError(`Mobile app with ID: ${mobileAppId} not found.`, 404);
     }
     return updatedMobileApp;
   }
 
-  async deleteMobileApp(mobileAppId: Types.ObjectId): Promise<IMobileApp | null> {
+  async deleteMobileApp(
+    mobileAppId: Types.ObjectId
+  ): Promise<IMobileApp | null> {
     const deletedMobileApp = await MobileApp.findByIdAndDelete(mobileAppId);
     if (!deletedMobileApp) {
-      throw new AppError(`Mobile app with ID: ${mobileAppId} not found.`,404);
+      throw new AppError(`Mobile app with ID: ${mobileAppId} not found.`, 404);
     }
     return deletedMobileApp;
   }

@@ -16,7 +16,7 @@ export class TemplateController {
       const statusCode = error instanceof AppError ? error.statusCode : 500;
       const message =error instanceof AppError? error.message: "An unexpected error occurred";
 
-      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
+      res.status(statusCode).json({errorCode: statusCode === 500 ? 500 : statusCode, message, });
     }
   }
 
@@ -28,7 +28,7 @@ export class TemplateController {
       const statusCode = error instanceof AppError ? error.statusCode : 500;
       const message =error instanceof AppError? error.message: "An unexpected error occurred";
 
-      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
+      res.status(statusCode).json({errorCode: statusCode === 500 ? 500 : statusCode, message, });
     }
   }
 
@@ -42,7 +42,7 @@ export class TemplateController {
       const statusCode = error instanceof AppError ? error.statusCode : 500;
       const message =error instanceof AppError? error.message: "An unexpected error occurred";
 
-      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
+      res.status(statusCode).json({errorCode: statusCode === 500 ? 500 : statusCode, message, });
     }
   }
 
@@ -58,7 +58,7 @@ export class TemplateController {
       const statusCode = error instanceof AppError ? error.statusCode : 500;
       const message =error instanceof AppError? error.message: "An unexpected error occurred";
 
-      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
+      res.status(statusCode).json({errorCode: statusCode === 500 ? 500 : statusCode, message, });
     }
   }
 
@@ -73,7 +73,7 @@ export class TemplateController {
       const statusCode = error instanceof AppError ? error.statusCode : 500;
       const message =error instanceof AppError? error.message: "An unexpected error occurred";
 
-      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
+      res.status(statusCode).json({errorCode: statusCode === 500 ? 500 : statusCode, message, });
     }
   }
 }

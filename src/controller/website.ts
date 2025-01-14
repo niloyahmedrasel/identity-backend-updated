@@ -3,6 +3,7 @@ import { WebsiteService } from "../service/website";
 import mongoose, { Types } from "mongoose";
 import { WebsiteRepository } from "../repostiory/website";
 import { AppError } from "../utils/appError";
+import path from "path";
 
 const websiteService = new WebsiteService();
 const websiteRepository = new WebsiteRepository();
@@ -10,19 +11,15 @@ export class WebsiteController {
   async createWebsite(req: Request, res: Response): Promise<any> {
     try {
       const businessId = new mongoose.Types.ObjectId(req.body.businessId);
-      const {
-        title,
-        domain,
-        templateId,
-        pricePloicy,
-        amount,
-        primaryUrl,
-      } = req.body;
+      const { title, domain, templateId, pricePloicy, amount, primaryUrl } =
+        req.body;
 
       const logo = req.file && req.file.originalname;
 
       if (!logo) {
-        return res.status(400).json({ errorCode: 1001, message: "Logo is required." });
+        return res
+          .status(400)
+          .json({ errorCode: 1001, message: "Logo is required." });
       }
 
       const response = await websiteService.createWebsite(
@@ -30,7 +27,7 @@ export class WebsiteController {
         title,
         logo,
         domain,
-        templateId,
+        templateId as Types.ObjectId,
         pricePloicy,
         amount,
         primaryUrl
@@ -42,35 +39,44 @@ export class WebsiteController {
       });
     } catch (error) {
       const statusCode = error instanceof AppError ? error.statusCode : 500;
+      const message =error instanceof AppError? error.message: "An unexpected error occurred";
+
+      res.status(statusCode).json({errorCode: statusCode === 500 ? 500 : statusCode,message});
+    }
+  }
+
+  async getAllWebsites(req: Request, res: Response): Promise<any> {
+    const businessId = req.query.businessId;
+    try {
+      if (businessId) {
+        const response = await websiteRepository.findOne({
+          businessId: new Types.ObjectId(businessId as string),
+        });
+
+        if (!response) {
+          return res
+            .status(404)
+            .json({ message: "Website not found , businessId is not valid" });
+        }
+        res
+          .status(200)
+          .json({ message: "Websites retrieved successfully", data: response });
+      } else {
+        const response = await websiteService.getAllWebsites();
+        res
+          .status(200)
+          .json({ message: "Websites retrieved successfully", data: response });
+      }
+    } catch (error) {
+      const statusCode = error instanceof AppError ? error.statusCode : 500;
       const message =
         error instanceof AppError
           ? error.message
           : "An unexpected error occurred";
 
-      res.status(statusCode).json({
-        errorCode: statusCode === 500 ? 1000 : statusCode, // Map statusCode to errorCode if needed
-        message,
-      });
-    }
-  }
-
-  async getAllWebsites(req: Request, res: Response) {
-
-    const businessId = req.query.businessId;
-    try {
-      if(businessId){
-        const response = await websiteRepository.findOne({businessId: new Types.ObjectId(businessId as string)});
-        res.status(200).json({ message: "Websites retrieved successfully", data: response });
-      }
-      else{
-        const response = await websiteService.getAllWebsites();
-        res.status(200).json({ message: "Websites retrieved successfully", data: response });
-      }
-    } catch (error) {
-      const statusCode = error instanceof AppError ? error.statusCode : 500;
-      const message =error instanceof AppError? error.message: "An unexpected error occurred";
-
-      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
+      res
+        .status(statusCode)
+        .json({ errorCode: statusCode === 500 ? 500 : statusCode, message });
     }
   }
 
@@ -78,16 +84,27 @@ export class WebsiteController {
     try {
       const businessId = req.params.businessId;
 
+      console.log(businessId)
+
       const response = await websiteService.getWebsitesByBusinessId(
         new Types.ObjectId(businessId)
       );
+      console.log(response)
 
-      res.status(200).json({ message: "Websites retrieved successfully", data: response });
+      res
+        .status(200)
+        .json({ message: "Websites retrieved successfully", data: response });
     } catch (error) {
+      console.log(error)
       const statusCode = error instanceof AppError ? error.statusCode : 500;
-      const message =error instanceof AppError? error.message: "An unexpected error occurred";
+      const message =
+        error instanceof AppError
+          ? error.message
+          : "An unexpected error occurred";
 
-      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
+      res
+        .status(statusCode)
+        .json({ errorCode: statusCode === 500 ? 500 : statusCode, message });
     }
   }
 
@@ -111,38 +128,76 @@ export class WebsiteController {
         .json({ message: "Website retrieved successfully", data: response });
     } catch (error) {
       const statusCode = error instanceof AppError ? error.statusCode : 500;
-      const message =error instanceof AppError? error.message: "An unexpected error occurred";
+      const message =
+        error instanceof AppError
+          ? error.message
+          : "An unexpected error occurred";
 
-      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
+      res
+        .status(statusCode)
+        .json({ errorCode: statusCode === 500 ? 500 : statusCode, message });
     }
   }
 
   async updateWebsite(req: Request, res: Response): Promise<any> {
     try {
       const { websiteId } = req.params;
-      const updateData = req.body;
-
-      if (!websiteId) {
-        return res.status(400).json({ message: "Website ID is required" });
+      console.log(websiteId)
+      // Validate websiteId
+      if (!websiteId || !Types.ObjectId.isValid(websiteId)) {
+        return res.status(400).json({ message: "Invalid Website ID" });
       }
+  
+      const updateData: any = {
+        title: req.body.title,
+        domain: req.body.domain,
+        amount: req.body.amount ? parseFloat(req.body.amount) : undefined,
+        pricePloicy: req.body.pricePloicy,
+      };
+  
+      // Validate and convert optional ObjectId fields
 
-      const response = await websiteService.updateWebsite(
+      if (req.body.templateId) {
+        if (!Types.ObjectId.isValid(req.body.templateId)) {
+          return res.status(400).json({ message: "Invalid Template ID" });
+        }
+        updateData.templateId = new Types.ObjectId(req.body.templateId);
+      }
+  
+      if (req.body.businessId) {
+        if (!Types.ObjectId.isValid(req.body.businessId)) {
+          return res.status(400).json({ message: "Invalid Business ID" });
+        }
+        updateData.businessId = new Types.ObjectId(req.body.businessId);
+      }
+  
+      // Handle file upload for logo
+      if (req.file) {
+        updateData.logo = path.basename(req.file.path)
+      }
+  
+      // Call the service
+      const updatedWebsite = await websiteService.updateWebsite(
         new Types.ObjectId(websiteId),
         updateData
       );
-
-      if (!response) {
+  
+      if (!updatedWebsite) {
         return res.status(404).json({ message: "Website not found" });
       }
-
-      res
-        .status(200)
-        .json({ message: "Website updated successfully", data: response });
+  
+      res.status(200).json({ message: "Website updated successfully", data: updatedWebsite });
     } catch (error) {
       const statusCode = error instanceof AppError ? error.statusCode : 500;
-      const message =error instanceof AppError? error.message: "An unexpected error occurred";
-
-      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
+      const message =
+        error instanceof AppError
+          ? error.message
+          : "An unexpected error occurred";
+  
+      res.status(statusCode).json({
+        errorCode: statusCode,
+        message,
+      });
     }
   }
 
@@ -167,9 +222,14 @@ export class WebsiteController {
         .json({ message: "Website deleted successfully", data: response });
     } catch (error) {
       const statusCode = error instanceof AppError ? error.statusCode : 500;
-      const message =error instanceof AppError? error.message: "An unexpected error occurred";
+      const message =
+        error instanceof AppError
+          ? error.message
+          : "An unexpected error occurred";
 
-      res.status(statusCode).json({errorCode: statusCode === 500 ? 1000 : statusCode, message, });
+      res
+        .status(statusCode)
+        .json({ errorCode: statusCode === 500 ? 500 : statusCode, message });
     }
   }
 }
