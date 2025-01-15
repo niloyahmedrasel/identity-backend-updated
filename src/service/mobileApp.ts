@@ -16,8 +16,9 @@ export class MobileAppService {
     const existingMobileApp = await MobileApp.findOne({ businessId });
 
     if (existingMobileApp) {
-      throw new Error(
-        "Business already has a mobile app. Cannot create another one."
+      throw new AppError(
+        "Business already has a mobile app. Cannot create another one.",
+        200
       );
     }
 
@@ -38,7 +39,7 @@ export class MobileAppService {
   async getAllMobileApps(): Promise<IMobileApp[]> {
     const mobileApps = await MobileApp.find({});
     if (mobileApps.length === 0) {
-      throw new AppError("No mobile apps found.", 404);
+      throw new AppError("No mobile apps found.", 200);
     }
     return mobileApps;
   }
@@ -48,7 +49,7 @@ export class MobileAppService {
   ): Promise<IMobileApp[]> {
     const mobileApps = await MobileApp.find({ businessId });
     if (mobileApps.length === 0) {
-      throw new Error(`No mobile apps found for business ID: ${businessId}`);
+      throw new AppError(`No mobile apps found for business ID: ${businessId}`,200);
     }
     return mobileApps;
   }
@@ -56,7 +57,7 @@ export class MobileAppService {
   async getMobileAppById(mobileAppId: string): Promise<IMobileApp | null> {
     const mobileApp = await MobileApp.findOne({ id: mobileAppId });
     if (!mobileApp) {
-      throw new AppError(`Mobile app with ID: ${mobileAppId} not found.`, 404);
+      throw new AppError(`Mobile app with ID: ${mobileAppId} not found.`, 200);
     }
     return mobileApp;
   }
@@ -71,7 +72,7 @@ export class MobileAppService {
       { new: true }
     );
     if (!updatedMobileApp) {
-      throw new AppError(`Mobile app with ID: ${mobileAppId} not found.`, 404);
+      throw new AppError(`Mobile app with ID: ${mobileAppId} not found.`, 200);
     }
     return updatedMobileApp;
   }
@@ -81,7 +82,7 @@ export class MobileAppService {
   ): Promise<IMobileApp | null> {
     const deletedMobileApp = await MobileApp.findByIdAndDelete(mobileAppId);
     if (!deletedMobileApp) {
-      throw new AppError(`Mobile app with ID: ${mobileAppId} not found.`, 404);
+      throw new AppError(`Mobile app with ID: ${mobileAppId} not found.`, 200);
     }
     return deletedMobileApp;
   }

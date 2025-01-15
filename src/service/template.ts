@@ -16,7 +16,7 @@ export class TemplateService {
   async getAllTemplates(): Promise<ITemplate[]> {
     const templates = await Template.find({});
     if (templates.length === 0) {
-      throw new AppError("No templates found.", 404);
+      throw new AppError("No templates found.", 200);
     }
     return templates;
   }
@@ -24,7 +24,7 @@ export class TemplateService {
   async getTemplateById(templateId: string): Promise<ITemplate | null> {
     const template = await Template.findOne({ _id: templateId });
     if (!template) {
-      throw new AppError(`Template with ID: ${templateId} not found.`, 404);
+      throw new AppError(`Template with ID: ${templateId} not found.`, 200);
     }
     return template;
   }
@@ -39,7 +39,7 @@ export class TemplateService {
       { new: true }
     );
     if (!updatedTemplate) {
-      throw new AppError(`Template with ID: ${templateId} not found.`, 404);
+      throw new AppError(`Template with ID: ${templateId} not found.`, 200);
     }
     return updatedTemplate;
   }
@@ -49,7 +49,7 @@ export class TemplateService {
       _id: templateId,
     });
     if (!deletedTemplate) {
-      throw new AppError(`Template with ID: ${templateId} not found.`, 404);
+      throw new AppError(`Template with ID: ${templateId} not found.`, 200);
     }
     return deletedTemplate;
   }

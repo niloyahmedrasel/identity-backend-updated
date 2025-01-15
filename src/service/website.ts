@@ -46,7 +46,7 @@ export class WebsiteService {
     console.log("all website");
     const websites = await websiteRepository.find({});
     if (websites.length === 0) {
-      throw new AppError("No websites found.", 404);
+      throw new AppError("No websites found.", 200);
     }
     return websites;
   }
@@ -69,7 +69,7 @@ export class WebsiteService {
     console.log("single website");
     const website = await websiteRepository.findOne({ id: websiteId });
     if (!website) {
-      throw new AppError(`Website with ID: ${websiteId} not found.`, 404);
+      throw new AppError(`Website with ID: ${websiteId} not found.`, 200);
     }
     return website;
   }
@@ -104,7 +104,7 @@ export class WebsiteService {
     );
   
     if (!updatedWebsite) {
-      throw new AppError(`Website with ID: ${websiteId} not found.`, 404);
+      throw new AppError(`Website with ID: ${websiteId} not found.`, 200);
     }
   
     return updatedWebsite;
@@ -115,7 +115,7 @@ export class WebsiteService {
       websiteId.toString()
     );
     if (!deletedWebsite) {
-      throw new AppError(`Website with ID: ${websiteId} not found.`, 404);
+      throw new AppError(`Website with ID: ${websiteId} not found.`, 200);
     }
     return deletedWebsite;
   }
