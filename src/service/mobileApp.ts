@@ -15,7 +15,7 @@ export class MobileAppService {
     const existingMobileApp = await MobileApp.findOne({ businessId });
 
     if (existingMobileApp) {
-      throw new Error("Business already has a mobile app. Cannot create another one.");
+      throw new Error("Business already has a mobile app. Cannot create another one."),200;
     }
 
     const id = Math.random().toString(36).substring(2, 8);
