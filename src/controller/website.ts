@@ -4,6 +4,7 @@ import mongoose, { Types } from "mongoose";
 import { WebsiteRepository } from "../repostiory/website";
 import { AppError } from "../utils/appError";
 import path from "path";
+import { IModification } from "../model/interface/website";
 
 const websiteService = new WebsiteService();
 const websiteRepository = new WebsiteRepository();
@@ -11,8 +12,7 @@ export class WebsiteController {
   async createWebsite(req: Request, res: Response): Promise<any> {
     try {
       const businessId = new mongoose.Types.ObjectId(req.body.businessId);
-      const { title, domain, templateId, pricePloicy, askRate, bidRate, primaryUrl } =
-        req.body;
+      const { title, domain, templateId, primaryUrl } = req.body;
 
       const logo = req.file && req.file.originalname;
 
@@ -22,15 +22,45 @@ export class WebsiteController {
           .json({ errorCode: 1001, message: "Logo is required." });
       }
 
+      // Initialize variables with default empty arrays
+      let askPriceModification: IModification[] = [];
+      let bidPriceModification: IModification[] = [];
+
+      // Parse and wrap as array if necessary
+      if (req.body.askPriceModification) {
+        try {
+          const parsedData = JSON.parse(req.body.askPriceModification);
+          askPriceModification = Array.isArray(parsedData)
+            ? parsedData
+            : [parsedData]; // Wrap single object in an array
+        } catch (err) {
+          return res.status(400).json({
+            message: "Invalid JSON format or structure for askPriceModification.",
+          });
+        }
+      }
+
+      if (req.body.bidPriceModification) {
+        try {
+          const parsedData = JSON.parse(req.body.bidPriceModification);
+          bidPriceModification = Array.isArray(parsedData)
+            ? parsedData
+            : [parsedData]; // Wrap single object in an array
+        } catch (err) {
+          return res.status(400).json({
+            message: "Invalid JSON format or structure for bidPriceModification.",
+          });
+        }
+      }
+
       const response = await websiteService.createWebsite(
         businessId,
         title,
         logo,
         domain,
-        templateId as Types.ObjectId,
-        pricePloicy,
-        askRate,
-        bidRate,
+        new mongoose.Types.ObjectId(templateId), // Ensure proper conversion
+        askPriceModification,
+        bidPriceModification,
         primaryUrl
       );
 
@@ -39,12 +69,20 @@ export class WebsiteController {
         data: response,
       });
     } catch (error) {
+      console.log(error);
       const statusCode = error instanceof AppError ? error.statusCode : 500;
-      const message =error instanceof AppError? error.message: "An unexpected error occurred";
+      const message =
+        error instanceof AppError
+          ? error.message
+          : "An unexpected error occurred";
 
-      res.status(statusCode).json({errorCode: statusCode === 500 ? 500 : statusCode,message});
+      res.status(statusCode).json({
+        errorCode: statusCode === 500 ? 500 : statusCode,
+        message,
+      });
     }
   }
+  
 
   async getAllWebsites(req: Request, res: Response): Promise<any> {
     const businessId = req.query.businessId;
@@ -143,22 +181,47 @@ export class WebsiteController {
   async updateWebsite(req: Request, res: Response): Promise<any> {
     try {
       const { websiteId } = req.params;
-      console.log(websiteId)
+  
       // Validate websiteId
       if (!websiteId || !Types.ObjectId.isValid(websiteId)) {
         return res.status(400).json({ message: "Invalid Website ID" });
       }
   
+      // Initialize updateData object
       const updateData: any = {
         title: req.body.title,
         domain: req.body.domain,
-        askRate: req.body.askRate ? parseFloat(req.body.askRate) : undefined,
-        bidRate: req.body.bidRate ? parseFloat(req.body.bidRate) : undefined,
-        pricePloicy: req.body.pricePloicy,
       };
   
+      // Parse and validate `askPriceModification`
+      if (req.body.askPriceModification) {
+        try {
+          const parsedData = JSON.parse(req.body.askPriceModification);
+          updateData.askPriceModification = Array.isArray(parsedData)
+            ? parsedData
+            : [parsedData]; // Wrap single object in an array
+        } catch (err) {
+          return res.status(400).json({
+            message: "Invalid JSON format or structure for askPriceModification.",
+          });
+        }
+      }
+  
+      // Parse and validate `bidPriceModification`
+      if (req.body.bidPriceModification) {
+        try {
+          const parsedData = JSON.parse(req.body.bidPriceModification);
+          updateData.bidPriceModification = Array.isArray(parsedData)
+            ? parsedData
+            : [parsedData]; // Wrap single object in an array
+        } catch (err) {
+          return res.status(400).json({
+            message: "Invalid JSON format or structure for bidPriceModification.",
+          });
+        }
+      }
+  
       // Validate and convert optional ObjectId fields
-
       if (req.body.templateId) {
         if (!Types.ObjectId.isValid(req.body.templateId)) {
           return res.status(400).json({ message: "Invalid Template ID" });
@@ -175,10 +238,10 @@ export class WebsiteController {
   
       // Handle file upload for logo
       if (req.file) {
-        updateData.logo = path.basename(req.file.path)
+        updateData.logo = path.basename(req.file.path);
       }
   
-      // Call the service
+      // Call the service to update the website
       const updatedWebsite = await websiteService.updateWebsite(
         new Types.ObjectId(websiteId),
         updateData
@@ -188,8 +251,12 @@ export class WebsiteController {
         return res.status(404).json({ message: "Website not found" });
       }
   
-      res.status(200).json({ message: "Website updated successfully", data: updatedWebsite });
+      res.status(200).json({
+        message: "Website updated successfully",
+        data: updatedWebsite,
+      });
     } catch (error) {
+      console.log(error);
       const statusCode = error instanceof AppError ? error.statusCode : 500;
       const message =
         error instanceof AppError
@@ -202,6 +269,7 @@ export class WebsiteController {
       });
     }
   }
+  
 
   async deleteWebsite(req: Request, res: Response): Promise<any> {
     try {

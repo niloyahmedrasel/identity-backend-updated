@@ -12,9 +12,8 @@ export class WebsiteService {
     logo: string,
     domain: string,
     templateId: Types.ObjectId,
-    pricePloicy: string,
-    askRate: number,
-    bidRate: number,
+    askPriceModification: IWebsite['askPriceModification'],
+    bidPriceModification: IWebsite['bidPriceModification'],
     primaryUrl?: string
   ): Promise<IWebsite> {
     const existBusiness = await websiteRepository.findOne({ businessId });
@@ -22,7 +21,7 @@ export class WebsiteService {
     if (existBusiness) {
       throw new AppError(
         "Business website already exists. Cannot create a new website.",
-        400
+        200
       );
     }
 
@@ -35,9 +34,8 @@ export class WebsiteService {
       logo,
       domain,
       templateId,
-      pricePloicy,
-      askRate,
-      bidRate,
+      askPriceModification,
+      bidPriceModification,
       primaryUrl,
     });
   }
@@ -83,9 +81,8 @@ export class WebsiteService {
       "logo",
       "domain",
       "templateId",
-      "pricePloicy",
-      "askRate",
-      "bidRate",
+      "askPriceModification",
+      "bidPriceModification",
       "businessId",
     ];
   
