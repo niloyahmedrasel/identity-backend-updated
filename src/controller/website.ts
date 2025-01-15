@@ -11,7 +11,7 @@ export class WebsiteController {
   async createWebsite(req: Request, res: Response): Promise<any> {
     try {
       const businessId = new mongoose.Types.ObjectId(req.body.businessId);
-      const { title, domain, templateId, pricePloicy, amount, primaryUrl } =
+      const { title, domain, templateId, pricePloicy, askRate, bidRate, primaryUrl } =
         req.body;
 
       const logo = req.file && req.file.originalname;
@@ -29,7 +29,8 @@ export class WebsiteController {
         domain,
         templateId as Types.ObjectId,
         pricePloicy,
-        amount,
+        askRate,
+        bidRate,
         primaryUrl
       );
 
@@ -151,7 +152,8 @@ export class WebsiteController {
       const updateData: any = {
         title: req.body.title,
         domain: req.body.domain,
-        amount: req.body.amount ? parseFloat(req.body.amount) : undefined,
+        askRate: req.body.askRate ? parseFloat(req.body.askRate) : undefined,
+        bidRate: req.body.bidRate ? parseFloat(req.body.bidRate) : undefined,
         pricePloicy: req.body.pricePloicy,
       };
   

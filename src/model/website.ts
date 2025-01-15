@@ -9,7 +9,8 @@ const websiteSchema = new mongoose.Schema<IWebsite>({
   domain: { type: String, required: true },
   templateId: { type: mongoose.Schema.Types.ObjectId, ref: "Template", required: true },
   pricePloicy: { type: String,enum:["Premium","Discount"], required: true },
-  amount: { type: Number, required: true },
+  askRate: { type: Number, default: 0 },
+  bidRate: { type: Number, default: 0 },
   businessId: { type: mongoose.Schema.Types.ObjectId, required: true },
 });
 

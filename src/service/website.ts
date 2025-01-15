@@ -13,7 +13,8 @@ export class WebsiteService {
     domain: string,
     templateId: Types.ObjectId,
     pricePloicy: string,
-    amount: number,
+    askRate: number,
+    bidRate: number,
     primaryUrl?: string
   ): Promise<IWebsite> {
     const existBusiness = await websiteRepository.findOne({ businessId });
@@ -35,7 +36,8 @@ export class WebsiteService {
       domain,
       templateId,
       pricePloicy,
-      amount,
+      askRate,
+      bidRate,
       primaryUrl,
     });
   }
@@ -82,7 +84,8 @@ export class WebsiteService {
       "domain",
       "templateId",
       "pricePloicy",
-      "amount",
+      "askRate",
+      "bidRate",
       "businessId",
     ];
   

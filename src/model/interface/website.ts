@@ -7,7 +7,8 @@ export interface IWebsite extends Document {
   domain:string;
   templateId:Types.ObjectId;
   pricePloicy:string;
-  amount:number;
+  askRate:number;
+  bidRate:number;
   businessId:Types.ObjectId;
   primaryUrl?: string;
 }
