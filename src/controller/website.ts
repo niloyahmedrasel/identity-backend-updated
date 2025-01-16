@@ -4,7 +4,8 @@ import mongoose, { Types } from "mongoose";
 import { WebsiteRepository } from "../repostiory/website";
 import { AppError } from "../utils/appError";
 import path from "path";
-import { IModification } from "../model/interface/website";
+import { IModification } from "../model/interface/mobileApp";
+
 
 const websiteService = new WebsiteService();
 const websiteRepository = new WebsiteRepository();
@@ -12,7 +13,7 @@ export class WebsiteController {
   async createWebsite(req: Request, res: Response): Promise<any> {
     try {
       const businessId = new mongoose.Types.ObjectId(req.body.businessId);
-      const { title, domain, templateId, primaryUrl } = req.body;
+      const { title, domain, templateId, primaryUrl, askPriceModification, bidPriceModification } = req.body;
 
       const logo = req.file && req.file.originalname;
 
@@ -22,43 +23,12 @@ export class WebsiteController {
           .json({ errorCode: 1001, message: "Logo is required." });
       }
 
-      // Initialize variables with default empty arrays
-      let askPriceModification: IModification[] = [];
-      let bidPriceModification: IModification[] = [];
-
-      // Parse and wrap as array if necessary
-      if (req.body.askPriceModification) {
-        try {
-          const parsedData = JSON.parse(req.body.askPriceModification);
-          askPriceModification = Array.isArray(parsedData)
-            ? parsedData
-            : [parsedData]; // Wrap single object in an array
-        } catch (err) {
-          return res.status(400).json({
-            message: "Invalid JSON format or structure for askPriceModification.",
-          });
-        }
-      }
-
-      if (req.body.bidPriceModification) {
-        try {
-          const parsedData = JSON.parse(req.body.bidPriceModification);
-          bidPriceModification = Array.isArray(parsedData)
-            ? parsedData
-            : [parsedData]; // Wrap single object in an array
-        } catch (err) {
-          return res.status(400).json({
-            message: "Invalid JSON format or structure for bidPriceModification.",
-          });
-        }
-      }
-
       const response = await websiteService.createWebsite(
         businessId,
         title,
         logo,
         domain,
-        new mongoose.Types.ObjectId(templateId), // Ensure proper conversion
+        new mongoose.Types.ObjectId(templateId), 
         askPriceModification,
         bidPriceModification,
         primaryUrl
@@ -181,67 +151,29 @@ export class WebsiteController {
   async updateWebsite(req: Request, res: Response): Promise<any> {
     try {
       const { websiteId } = req.params;
+      const updateData = { ...req.body }; 
   
-      // Validate websiteId
-      if (!websiteId || !Types.ObjectId.isValid(websiteId)) {
-        return res.status(400).json({ message: "Invalid Website ID" });
-      }
-  
-      // Initialize updateData object
-      const updateData: any = {
-        title: req.body.title,
-        domain: req.body.domain,
-      };
-  
-      // Parse and validate `askPriceModification`
-      if (req.body.askPriceModification) {
+      if (updateData.askPriceModification) {
         try {
-          const parsedData = JSON.parse(req.body.askPriceModification);
-          updateData.askPriceModification = Array.isArray(parsedData)
-            ? parsedData
-            : [parsedData]; // Wrap single object in an array
-        } catch (err) {
-          return res.status(400).json({
-            message: "Invalid JSON format or structure for askPriceModification.",
-          });
+          updateData.askPriceModification = JSON.parse(updateData.askPriceModification);
+        } catch (error) {
+          throw new AppError("Invalid JSON format for askPriceModification.", 400);
         }
       }
   
-      // Parse and validate `bidPriceModification`
-      if (req.body.bidPriceModification) {
+      if (updateData.bidPriceModification) {
         try {
-          const parsedData = JSON.parse(req.body.bidPriceModification);
-          updateData.bidPriceModification = Array.isArray(parsedData)
-            ? parsedData
-            : [parsedData]; // Wrap single object in an array
-        } catch (err) {
-          return res.status(400).json({
-            message: "Invalid JSON format or structure for bidPriceModification.",
-          });
+          updateData.bidPriceModification = JSON.parse(updateData.bidPriceModification);
+        } catch (error) {
+          throw new AppError("Invalid JSON format for bidPriceModification.", 400);
         }
       }
   
-      // Validate and convert optional ObjectId fields
-      if (req.body.templateId) {
-        if (!Types.ObjectId.isValid(req.body.templateId)) {
-          return res.status(400).json({ message: "Invalid Template ID" });
-        }
-        updateData.templateId = new Types.ObjectId(req.body.templateId);
+      const logo = req.file && req.file.originalname;
+      if (logo) {
+        updateData.logo = logo;
       }
   
-      if (req.body.businessId) {
-        if (!Types.ObjectId.isValid(req.body.businessId)) {
-          return res.status(400).json({ message: "Invalid Business ID" });
-        }
-        updateData.businessId = new Types.ObjectId(req.body.businessId);
-      }
-  
-      // Handle file upload for logo
-      if (req.file) {
-        updateData.logo = path.basename(req.file.path);
-      }
-  
-      // Call the service to update the website
       const updatedWebsite = await websiteService.updateWebsite(
         new Types.ObjectId(websiteId),
         updateData

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { MobileAppService } from "../service/mobileApp";
 import { Types } from "mongoose";
 import { AppError } from "../utils/appError";
-import { IMobileModification } from "../model/interface/mobileApp";
+import { IModification } from "../model/interface/mobileApp";
 
 const mobileAppService = new MobileAppService();
 

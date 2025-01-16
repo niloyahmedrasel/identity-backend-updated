@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 import { WebsiteRepository } from "../repostiory/website";
 import { IWebsite } from "../model/interface/website";
 import { AppError } from "../utils/appError";
+import { IModification } from "../model/interface/mobileApp";
 
 const websiteRepository = new WebsiteRepository();
 
@@ -12,8 +13,8 @@ export class WebsiteService {
     logo: string,
     domain: string,
     templateId: Types.ObjectId,
-    askPriceModification: IWebsite['askPriceModification'],
-    bidPriceModification: IWebsite['bidPriceModification'],
+    askPriceModification: string,
+    bidPriceModification: string,
     primaryUrl?: string
   ): Promise<IWebsite> {
     const existBusiness = await websiteRepository.findOne({ businessId });
@@ -27,6 +28,16 @@ export class WebsiteService {
 
     const id = Math.random().toString().substring(2, 8);
 
+     let parsedAskPriceModification: IModification;
+     let parsedBidPriceModification: IModification;
+      
+        try {
+          parsedAskPriceModification = JSON.parse(askPriceModification);
+          parsedBidPriceModification = JSON.parse(bidPriceModification);
+        } catch (error) {
+          throw new AppError("Invalid JSON format for price modifications.", 400);
+        }
+
     return await websiteRepository.create({
       id,
       businessId,
@@ -34,8 +45,8 @@ export class WebsiteService {
       logo,
       domain,
       templateId,
-      askPriceModification,
-      bidPriceModification,
+      askPriceModification: parsedAskPriceModification,
+      bidPriceModification: parsedBidPriceModification,
       primaryUrl,
     });
   }
@@ -94,7 +105,6 @@ export class WebsiteService {
       throw new AppError("No valid fields provided for update.", 400);
     }
   
-    // Call the repository to perform the update
     const updatedWebsite = await websiteRepository.updateByID(
       websiteId.toString(),
       updateData

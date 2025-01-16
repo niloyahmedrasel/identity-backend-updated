@@ -2,10 +2,6 @@ import { IMobileApp } from "./interface/mobileApp";
 import mongoose from "mongoose";
 
 
-
-
-
-
 const mobileAppSchema = new mongoose.Schema<IMobileApp>({
   id: { type: String, required: true },
   title: { type: String, required: true },

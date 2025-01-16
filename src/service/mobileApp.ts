@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 import { MobileApp } from "../model/mobileApp";
-import { IMobileApp, IMobileModification } from "../model/interface/mobileApp";
+import { IMobileApp, IModification } from "../model/interface/mobileApp";
 import { AppError } from "../utils/appError";
 
 export class MobileAppService {
@@ -27,8 +27,8 @@ export class MobileAppService {
     const id = Math.random().toString().substring(2, 8);
   
     
-    let parsedAskPriceModification: IMobileModification;
-    let parsedBidPriceModification: IMobileModification;
+    let parsedAskPriceModification: IModification;
+    let parsedBidPriceModification: IModification;
   
     try {
       parsedAskPriceModification = JSON.parse(askPriceModification);
