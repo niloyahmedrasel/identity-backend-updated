@@ -64,7 +64,7 @@ export class WebsiteController {
 
         if (!response) {
           return res
-            .status(404)
+            .status(200)
             .json({ message: "Website not found , businessId is not valid" });
         }
         res
