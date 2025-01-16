@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 import { MobileApp } from "../model/mobileApp";
-import { IMobileApp } from "../model/interface/mobileApp";
+import { IMobileApp, IMobileModification } from "../model/interface/mobileApp";
 import { AppError } from "../utils/appError";
 
 export class MobileAppService {
@@ -9,29 +9,43 @@ export class MobileAppService {
     logo: string,
     appUrl: string,
     templateId: Types.ObjectId,
-    pricePloicy: string,
-    amount: number,
+    askPriceModification: string, 
+    bidPriceModification: string, 
     businessId: Types.ObjectId
   ): Promise<IMobileApp> {
+    
     const existingMobileApp = await MobileApp.findOne({ businessId });
-
+  
     if (existingMobileApp) {
       throw new AppError(
         "Business already has a mobile app. Cannot create another one.",
         200
       );
     }
-
+  
+    
     const id = Math.random().toString().substring(2, 8);
-
+  
+    
+    let parsedAskPriceModification: IMobileModification;
+    let parsedBidPriceModification: IMobileModification;
+  
+    try {
+      parsedAskPriceModification = JSON.parse(askPriceModification);
+      parsedBidPriceModification = JSON.parse(bidPriceModification);
+    } catch (error) {
+      throw new AppError("Invalid JSON format for price modifications.", 400);
+    }
+  
+    
     return await MobileApp.create({
       id,
       title,
       logo,
       appUrl,
       templateId,
-      pricePloicy,
-      amount,
+      askPriceModification: parsedAskPriceModification,
+      bidPriceModification: parsedBidPriceModification,
       businessId,
     });
   }
