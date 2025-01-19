@@ -15,13 +15,8 @@ export class WebsiteController {
       const businessId = new mongoose.Types.ObjectId(req.body.businessId);
       const { title, domain, templateId, primaryUrl, askPriceModification, bidPriceModification } = req.body;
 
-      const logo = req.file && req.file.originalname;
+      const logo = req.file && req.file.originalname || "";
 
-      if (!logo) {
-        return res
-          .status(400)
-          .json({ errorCode: 1001, message: "Logo is required." });
-      }
 
       const response = await websiteService.createWebsite(
         businessId,

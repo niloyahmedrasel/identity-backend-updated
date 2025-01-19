@@ -4,8 +4,8 @@ import mongoose from "mongoose";
 
 const mobileAppSchema = new mongoose.Schema<IMobileApp>({
   id: { type: String, required: true },
-  title: { type: String, required: true },
-  logo: { type: String, required: true },
+  title: { type: String},
+  logo: { type: String},
   appUrl: { type: String, required: true },
   templateId: { type: mongoose.Schema.Types.ObjectId, required: true },
   askPriceModification: 

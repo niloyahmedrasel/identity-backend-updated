@@ -18,13 +18,7 @@ export class MobileAppController {
         businessId,
       } = req.body;
 
-      const logo = req.file && req.file.originalname;
-
-      if (!logo) {
-        return res
-          .status(400)
-          .json({ errorCode: 1001, message: "Logo is required." });
-      }
+      const logo = req.file && req.file.originalname || "";
 
 
       const response = await mobileAppService.createMobileApp(
