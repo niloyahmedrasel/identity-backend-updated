@@ -13,7 +13,7 @@ export class WebsiteController {
   async createWebsite(req: Request, res: Response): Promise<any> {
     try {
       const businessId = new mongoose.Types.ObjectId(req.body.businessId);
-      const { title, domain, templateId, primaryUrl, askPriceModification, bidPriceModification } = req.body;
+      const { title, domain, templateId, primaryUrl,jewellery22k,gold9999Gm,tenTola,gold9999Kg,kilobar995, askPriceModification, bidPriceModification } = req.body;
 
       const logo = req.file && req.file.originalname || "";
 
@@ -24,6 +24,11 @@ export class WebsiteController {
         logo,
         domain,
         new mongoose.Types.ObjectId(templateId), 
+        jewellery22k,
+        gold9999Gm,
+        tenTola,
+        gold9999Kg,
+        kilobar995,
         askPriceModification,
         bidPriceModification,
         primaryUrl
@@ -161,6 +166,41 @@ export class WebsiteController {
           updateData.bidPriceModification = JSON.parse(updateData.bidPriceModification);
         } catch (error) {
           throw new AppError("Invalid JSON format for bidPriceModification.", 400);
+        }
+      }
+      if (updateData.jewellery22k) {
+        try {
+          updateData.jewellery22k = JSON.parse(updateData.jewellery22k);
+        } catch (error) {
+          throw new AppError("Invalid JSON format for jewellery22k.", 400);
+        }
+      }
+      if (updateData.gold9999Gm) {
+        try {
+          updateData.gold9999Gm = JSON.parse(updateData.gold9999Gm);
+        } catch (error) {
+          throw new AppError("Invalid JSON format for gold9999Gm.", 400);
+        }
+      }
+      if (updateData.tenTola) {
+        try {
+          updateData.tenTola = JSON.parse(updateData.tenTola);
+        } catch (error) {
+          throw new AppError("Invalid JSON format for tenTola.", 400);
+        }
+      }
+      if (updateData.gold9999Kg) {
+        try {
+          updateData.gold9999Kg = JSON.parse(updateData.gold9999Kg);
+        } catch (error) {
+          throw new AppError("Invalid JSON format for gold9999Kg.", 400);
+        }
+      }
+      if (updateData.kilobar995) {
+        try {
+          updateData.kilobar995 = JSON.parse(updateData.kilobar995);
+        } catch (error) {
+          throw new AppError("Invalid JSON format for kilobar995.", 400);
         }
       }
   

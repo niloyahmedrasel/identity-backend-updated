@@ -9,6 +9,11 @@ export class MobileAppService {
     logo: string,
     appUrl: string,
     templateId: Types.ObjectId,
+    jewellery22k: string,
+    gold9999Gm: string,
+    tenTola: string,
+    gold9999Kg: string,
+    kilobar995: string,
     askPriceModification: string, 
     bidPriceModification: string, 
     businessId: Types.ObjectId
@@ -29,10 +34,20 @@ export class MobileAppService {
     
     let parsedAskPriceModification: IModification;
     let parsedBidPriceModification: IModification;
+    let parsedJewellery22k: IModification;
+    let parsedGold9999Gm: IModification;
+    let parsedTenTola: IModification;
+    let parsedGold9999Kg: IModification;
+    let parsedKilobar995: IModification;
   
     try {
       parsedAskPriceModification = JSON.parse(askPriceModification);
       parsedBidPriceModification = JSON.parse(bidPriceModification);
+      parsedJewellery22k = JSON.parse(jewellery22k);
+      parsedGold9999Gm = JSON.parse(gold9999Gm);
+      parsedTenTola = JSON.parse(tenTola);
+      parsedGold9999Kg = JSON.parse(gold9999Kg);
+      parsedKilobar995 = JSON.parse(kilobar995);
     } catch (error) {
       throw new AppError("Invalid JSON format for price modifications.", 400);
     }
@@ -44,6 +59,11 @@ export class MobileAppService {
       logo,
       appUrl,
       templateId,
+      jewellery22k: parsedJewellery22k,
+      gold9999Gm: parsedGold9999Gm,
+      tenTola: parsedTenTola,
+      gold9999Kg: parsedGold9999Kg,
+      kilobar995: parsedKilobar995,
       askPriceModification: parsedAskPriceModification,
       bidPriceModification: parsedBidPriceModification,
       businessId,

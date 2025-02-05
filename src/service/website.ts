@@ -13,6 +13,11 @@ export class WebsiteService {
     logo: string,
     domain: string,
     templateId: Types.ObjectId,
+    jewellery22k: string,
+    gold9999Gm: string,
+    tenTola: string,
+    gold9999Kg: string,
+    kilobar995: string,
     askPriceModification: string,
     bidPriceModification: string,
     primaryUrl?: string
@@ -30,10 +35,20 @@ export class WebsiteService {
 
      let parsedAskPriceModification: IModification;
      let parsedBidPriceModification: IModification;
+     let parsedJewellery22k: IModification;
+     let parsedGold9999Gm: IModification;
+     let parsedTenTola: IModification;
+     let parsedGold9999Kg: IModification;
+     let parsedKilobar995: IModification;
       
         try {
           parsedAskPriceModification = JSON.parse(askPriceModification);
           parsedBidPriceModification = JSON.parse(bidPriceModification);
+          parsedJewellery22k = JSON.parse(jewellery22k);
+          parsedGold9999Gm = JSON.parse(gold9999Gm);
+          parsedTenTola = JSON.parse(tenTola);
+          parsedGold9999Kg = JSON.parse(gold9999Kg);
+          parsedKilobar995 = JSON.parse(kilobar995);
         } catch (error) {
           throw new AppError("Invalid JSON format for price modifications.", 400);
         }
@@ -47,6 +62,11 @@ export class WebsiteService {
       templateId,
       askPriceModification: parsedAskPriceModification,
       bidPriceModification: parsedBidPriceModification,
+      jewellery22k: parsedJewellery22k,
+      gold9999Gm: parsedGold9999Gm,
+      tenTola: parsedTenTola,
+      gold9999Kg: parsedGold9999Kg,
+      kilobar995: parsedKilobar995,
       primaryUrl,
     });
   }
@@ -92,6 +112,11 @@ export class WebsiteService {
       "logo",
       "domain",
       "templateId",
+      "jewellery22k",
+      "gold9999Gm",
+      "tenTola",
+      "gold9999Kg",
+      "kilobar995",
       "askPriceModification",
       "bidPriceModification",
       "businessId",
